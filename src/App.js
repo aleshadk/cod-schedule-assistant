@@ -1,24 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState } from "react";
+import userStorage from "./storage/UserStorage";
+import ChooseUser from "./ChooseUser.js";
+import ChooseSlot from "./ChooseSlot.js";
+import { TIMEZONE_MAPPING, USERS } from "./const";
+import { utcToZonedTime } from "date-fns-tz";
+
+function chooseDefaultTime() {
+  const now = new Date();
+  now.setSeconds(0);
+  const minutes = now.getMinutes();
+
+  if (minutes <= 30) {
+    now.setMinutes(30);
+  } else {
+    now.setMinutes(0);
+    now.setHours(now.getHours + 1);
+  }
+
+  return now;
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+  const [user, setUser] = useState(userStorage.getUser());
+  const [slot, setSlot] = useState(chooseDefaultTime());
+
+  function onUserSelect(user) {
+    userStorage.saveUser(user);
+    setUser(user);
+  }
+
+  function onResetUser() {
+    userStorage.resetUser();
+    setUser(null);
+  }
+
+  return user ? (
+    <>
+      <ChooseSlot value={slot} setSlot={setSlot} />
+      {USERS.map((x) => (
+        <p key={x}>
+          {x}: {utcToZonedTime(slot, TIMEZONE_MAPPING[x]).toLocaleTimeString()}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      ))}
+
+      <button onClick={onResetUser}>Очистить текущего пользователя</button>
+    </>
+  ) : (
+    <ChooseUser value={user} setValue={onUserSelect} />
   );
 }
 
