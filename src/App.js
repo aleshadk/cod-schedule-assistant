@@ -13,7 +13,7 @@ function chooseDefaultTime() {
     now.setMinutes(30);
   } else {
     now.setMinutes(0);
-    now.setHours(now.getHours + 1);
+    now.setHours(now.getHours() + 1);
   }
 
   return now;
