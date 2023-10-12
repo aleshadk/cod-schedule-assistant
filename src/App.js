@@ -1,7 +1,5 @@
 import "./App.css";
 import { useState } from "react";
-import userStorage from "./storage/UserStorage";
-import ChooseUser from "./ChooseUser.js";
 import ChooseSlot from "./ChooseSlot.js";
 import { TIMEZONE_MAPPING, USERS } from "./const";
 import { utcToZonedTime } from "date-fns-tz";
@@ -21,21 +19,26 @@ function chooseDefaultTime() {
   return now;
 }
 
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+}
+
 function App() {
-  const [user, setUser] = useState(userStorage.getUser());
   const [slot, setSlot] = useState(chooseDefaultTime());
 
-  function onUserSelect(user) {
-    userStorage.saveUser(user);
-    setUser(user);
+  function copyText() {
+    const text = USERS.map(
+      (x) =>
+        `${x}: ${utcToZonedTime(
+          slot,
+          TIMEZONE_MAPPING[x]
+        ).toLocaleTimeString()}`
+    ).join("\n");
+
+    copyToClipboard(text);
   }
 
-  function onResetUser() {
-    userStorage.resetUser();
-    setUser(null);
-  }
-
-  return user ? (
+  return (
     <>
       <ChooseSlot value={slot} setSlot={setSlot} />
       {USERS.map((x) => (
@@ -44,10 +47,8 @@ function App() {
         </p>
       ))}
 
-      <button onClick={onResetUser}>Очистить текущего пользователя</button>
+      <button onClick={copyText}>Копировать</button>
     </>
-  ) : (
-    <ChooseUser value={user} setValue={onUserSelect} />
   );
 }
 
