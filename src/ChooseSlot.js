@@ -1,5 +1,3 @@
-import moment from "moment";
-
 export default function ChooseSlot({ value, setSlot }) {
   const date = new Date(value);
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
