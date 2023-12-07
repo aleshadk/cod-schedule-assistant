@@ -4,5 +4,5 @@ export const TIMEZONE_MAPPING = {
   Ульяна: "Europe/Berlin",
   Игорь: "Europe/London",
   Айгюн: "Europe/Istanbul",
-  Лёша: "Europe/Istanbul",
+  Лёша: "America/Buenos_Aires",
 };
